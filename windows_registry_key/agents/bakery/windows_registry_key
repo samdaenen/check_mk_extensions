@@ -1,0 +1,39 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8; py-indent-offset: 4 -*-
+#
+# windows_registry_key - Windows Registry Key
+#
+# Copyright (C) 2020 Sam Daenen <sam.daenen@continu-it.be>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+def bake_windows_registry_key(opsys, conf, conf_dir, plugins_dir):
+    output = file(plugins_dir + "/windows_registry_key.vbs", "w")
+    for line in file(cmk.utils.paths.local_agents_dir + "/windows/plugins/windows_registry_key.vbs"):
+        if line.startswith("regPaths = "):
+            if "paths" in conf:
+                line = "regPaths = Array(%s)\r\n" % ",".join('"%s"' % p for p in conf["paths"])
+            else:
+                line = "regPaths = Array(\"\")\r\n"
+        output.write(line)
+    if 'interval' in conf:
+        f = file(conf_dir + "/check_mk.ini.plugins.windows_registry_key", "w")
+        f.write("   cache_age windows_registry_key.vbs = %d\r\n" % conf['interval'])
+        f.close
+
+bakery_info["windows_registry_key"] = {
+    "bake_function": bake_windows_registry_key,
+    "os": ["windows"],
+}

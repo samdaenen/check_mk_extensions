@@ -1,0 +1,16 @@
+title: Check Windows registry key
+agents: Windows
+catalog: os/misc
+distribution:
+author: Sam Daenen <sam.daenen@continut-it.be>
+license: GPL
+description:
+ This check monitors the status of the Windows registry key using the [Windows registry key] plugin that needs to be configured in WATO.
+
+ The check parameters can be configured via the corresponding WATO rule {Windows registry key}
+
+item:
+ The key name.
+
+inventory:
+ One check per registry key as configured with {Windows registry key}
